@@ -11,9 +11,11 @@ def index_documents(uploaded_files):
     document_index = {}  # reset index
 
     for file in uploaded_files:
-        text = extract_text(file)
-        if text:
-            document_index[file.name] = text
+        # Only index if not already indexed
+        if file.name not in document_index:
+            text = extract_text(file)
+            if text:
+                document_index[file.name] = text
     return document_index
 
 def get_snippet(text, query, length=100):
@@ -31,9 +33,14 @@ def search_query(query):
     """
     Return unique documents with a snippet
     """
+    seen_docs = set()  # to track unique documents
     results = []
+
     for doc_name, text in document_index.items():
+        if doc_name in seen_docs:
+            continue
         snippet = get_snippet(text, query)
         if snippet:
             results.append({"document": doc_name, "snippet": snippet})
+            seen_docs.add(doc_name)  # mark as added
     return results
