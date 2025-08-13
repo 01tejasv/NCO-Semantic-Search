@@ -6,9 +6,9 @@ document_index = {}
 def index_documents(uploaded_files):
     """
     Extract full text from uploaded files and store in document_index
+    Prevent duplicate indexing across multiple uploads.
     """
     global document_index
-    document_index = {}  # reset index
 
     for file in uploaded_files:
         if file.name not in document_index:
@@ -42,15 +42,16 @@ def search_query(query):
     Return a unique document result per file with a snippet
     """
     results = []
+    seen_docs = set()
+
     for doc_name, text in document_index.items():
-        snippet = get_snippet(text, query)
-        if snippet:
-            results.append({
-                "document": doc_name,
-                "snippet": snippet
-            })
-    # Ensure only one entry per document
-    unique_results = {}
-    for res in results:
-        unique_results[res["document"]] = res
-    return list(unique_results.values())
+        if doc_name not in seen_docs:
+            snippet = get_snippet(text, query)
+            if snippet:
+                results.append({
+                    "document": doc_name,
+                    "snippet": snippet
+                })
+                seen_docs.add(doc_name)
+
+    return results
