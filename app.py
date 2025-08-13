@@ -1,17 +1,12 @@
 import streamlit as st
 from backend import index_documents, search_query
 
-st.set_page_config(
-    page_title="NCO Semantic Search Engine",
-    layout="wide"
-)
+st.set_page_config(page_title="NCO Semantic Search Engine", layout="wide")
 
 st.title("🕵️‍♂️ NCO Semantic Search Engine")
 st.markdown(
-    """
-Upload your documents below (PDF, DOCX, TXT).  
-The search engine will index them and allow you to search for relevant content.
-"""
+    "Upload your documents (PDF, DOCX, TXT) below. "
+    "The search engine will index them and allow you to search for relevant content."
 )
 
 # Upload documents
