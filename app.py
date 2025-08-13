@@ -31,9 +31,18 @@ query = st.text_input("Enter your search query:")
 
 if query:
     results = search_query(query)
-    if results:
+
+    # Ensure unique results at display stage
+    unique_results = []
+    seen_docs = set()
+    for res in results:
+        if res['document'] not in seen_docs:
+            unique_results.append(res)
+            seen_docs.add(res['document'])
+
+    if unique_results:
         st.subheader("Search Results:")
-        for res in results:
+        for res in unique_results:
             st.markdown(f"### 📄 {res['document']}")
             st.markdown(f"_{res['snippet']}_")
     else:
