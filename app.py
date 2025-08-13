@@ -14,8 +14,16 @@ uploaded_files = st.file_uploader(
 )
 
 if uploaded_files:
+    # Deduplicate uploaded files by filename
+    unique_files = []
+    seen = set()
+    for file in uploaded_files:
+        if file.name not in seen:
+            unique_files.append(file)
+            seen.add(file.name)
+
     with st.spinner("Indexing documents..."):
-        index_documents(uploaded_files)
+        index_documents(unique_files)
     st.success("✅ Documents indexed successfully!")
 
 # Search input
@@ -25,7 +33,6 @@ if query:
     results = search_query(query)
     if results:
         st.subheader("Search Results:")
-        # Show each document only once
         for res in results:
             st.markdown(f"### 📄 {res['document']}")
             st.markdown(f"_{res['snippet']}_")
