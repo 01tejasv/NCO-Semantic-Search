@@ -1,24 +1,40 @@
-import os
 from utils.text_utils import extract_text
-import numpy as np
 
-# Simple in-memory "index"
-DOCUMENTS = []
-DOCUMENT_TEXTS = []
+# In-memory index: {filename: full_text}
+document_index = {}
 
-def index_documents(files):
-    global DOCUMENTS, DOCUMENT_TEXTS
-    for file in files:
+def index_documents(uploaded_files):
+    """
+    Extract text from uploaded files and store in document_index
+    """
+    global document_index
+    document_index = {}  # reset index
+
+    for file in uploaded_files:
         text = extract_text(file)
-        DOCUMENTS.append(file.name)
-        DOCUMENT_TEXTS.append(text)
+        if text:
+            document_index[file.name] = text
 
-def search_query(query, top_k=5):
-    # Dummy search: return first top_k documents containing any query word
-    query_words = query.lower().split()
+    return document_index
+
+def get_snippet(text, query, length=100):
+    """
+    Return a small snippet around the first occurrence of query
+    """
+    idx = text.lower().find(query.lower())
+    if idx == -1:
+        return ""
+    start = max(idx - length, 0)
+    end = min(idx + length + len(query), len(text))
+    return "..." + text[start:end] + "..."
+
+def search_query(query):
+    """
+    Search the indexed documents and return only unique documents with snippet
+    """
     results = []
-    for doc_name, text in zip(DOCUMENTS, DOCUMENT_TEXTS):
-        if any(word in text.lower() for word in query_words):
-            results.append(doc_name)
-    return results[:top_k]
-
+    for doc_name, text in document_index.items():
+        snippet = get_snippet(text, query)
+        if snippet:  # only add if snippet is found
+            results.append({"document": doc_name, "snippet": snippet})
+    return results
