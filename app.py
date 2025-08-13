@@ -4,14 +4,10 @@ from backend import index_documents, search_query
 st.set_page_config(page_title="NCO Semantic Search Engine", layout="wide")
 
 st.title("🕵️‍♂️ NCO Semantic Search Engine")
-st.markdown(
-    "Upload your documents (PDF, DOCX, TXT) below. "
-    "The search engine will index them and allow you to search for relevant content."
-)
+st.markdown("Upload PDF, DOCX, or TXT documents. Search will return relevant snippets.")
 
-# Upload documents
 uploaded_files = st.file_uploader(
-    "Choose your files",
+    "Choose files",
     type=["pdf", "docx", "txt"],
     accept_multiple_files=True
 )
@@ -21,7 +17,6 @@ if uploaded_files:
         index_documents(uploaded_files)
     st.success("✅ Documents indexed successfully!")
 
-# Search query
 query = st.text_input("Enter your search query:")
 
 if query:
@@ -32,4 +27,4 @@ if query:
             st.markdown(f"**📄 {res['document']}**")
             st.info(res['snippet'])
     else:
-        st.warning("No results found for your query.")
+        st.warning("No results found.")
