@@ -1,6 +1,6 @@
 from utils.text_utils import extract_text
 
-# In-memory index: {filename: full_text}
+# Global index: stores full text for each document
 document_index = {}
 
 def index_documents(uploaded_files):
@@ -14,12 +14,11 @@ def index_documents(uploaded_files):
         text = extract_text(file)
         if text:
             document_index[file.name] = text
-
     return document_index
 
 def get_snippet(text, query, length=100):
     """
-    Return a small snippet around the first occurrence of query
+    Return a snippet around the first occurrence of query
     """
     idx = text.lower().find(query.lower())
     if idx == -1:
@@ -30,11 +29,11 @@ def get_snippet(text, query, length=100):
 
 def search_query(query):
     """
-    Search the indexed documents and return only unique documents with snippet
+    Return unique documents with a snippet
     """
     results = []
     for doc_name, text in document_index.items():
         snippet = get_snippet(text, query)
-        if snippet:  # only add if snippet is found
+        if snippet:
             results.append({"document": doc_name, "snippet": snippet})
     return results
