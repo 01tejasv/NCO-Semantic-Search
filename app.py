@@ -6,6 +6,7 @@ st.set_page_config(page_title="NCO Semantic Search Engine", layout="wide")
 st.title("🕵️‍♂️ NCO Semantic Search Engine")
 st.markdown("Upload PDF, DOCX, or TXT documents. Search will return relevant snippets.")
 
+# File upload
 uploaded_files = st.file_uploader(
     "Choose files",
     type=["pdf", "docx", "txt"],
@@ -17,14 +18,16 @@ if uploaded_files:
         index_documents(uploaded_files)
     st.success("✅ Documents indexed successfully!")
 
+# Search input
 query = st.text_input("Enter your search query:")
 
 if query:
     results = search_query(query)
     if results:
         st.subheader("Search Results:")
+        # Show each document only once
         for res in results:
-            st.markdown(f"**📄 {res['document']}**")
-            st.info(res['snippet'])
+            st.markdown(f"### 📄 {res['document']}")
+            st.markdown(f"_{res['snippet']}_")
     else:
         st.warning("No results found.")
